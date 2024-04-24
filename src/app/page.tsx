@@ -1,5 +1,3 @@
-import { promises as fs } from 'fs'
-import path from 'path'
 import { Metadata } from 'next'
 import { z } from 'zod'
 import { columns } from '@/components/columns'
@@ -11,15 +9,20 @@ export const metadata: Metadata = {
   description: 'A task and issue tracker build using Tanstack Table.'
 }
 
-// Simulate a database read for tasks.
 async function getTasks() {
-  const data = await fs.readFile(
-    path.join(process.cwd(), 'src/data/tasks.json')
-  )
+  try {
+    const res = await fetch(`${process.env.API_BASE_URL}/api`, {
+      cache: 'no-store'
+    })
 
-  const tasks = JSON.parse(data.toString())
-
-  return z.array(taskSchema).parse(tasks)
+    if (!res.ok) {
+      throw new Error('Failed to fetch topics')
+    }
+    const data = await res.json()
+    return z.array(taskSchema).parse(data?.tasks)
+  } catch (error) {
+    console.log('Error loading topics: ', error)
+  }
 }
 
 export default async function TaskPage() {
@@ -32,7 +35,7 @@ export default async function TaskPage() {
           Here&apos;s a list of tasks for this month!
         </p>
       </div>
-      <DataTable data={tasks} columns={columns} />
+      <DataTable data={tasks || []} columns={columns} />
     </div>
   )
 }
