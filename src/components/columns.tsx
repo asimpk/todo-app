@@ -38,11 +38,13 @@ export const columns: ColumnDef<Task>[] = [
     enableHiding: false
   },
   {
-    accessorKey: 'id',
+    accessorKey: '_id',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Task' />
     ),
-    cell: ({ row }) => <div className='w-[80px]'>{row.getValue('id')}</div>,
+    cell: ({ row }) => (
+      <div className='max-w-[80px] truncate'>{row.getValue('_id')}</div>
+    ),
     enableSorting: false,
     enableHiding: false
   },
@@ -87,8 +89,8 @@ export const columns: ColumnDef<Task>[] = [
         </div>
       )
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
+    filterFn: (row, _id, value) => {
+      return value.includes(row.getValue(_id))
     }
   },
   {
@@ -114,8 +116,8 @@ export const columns: ColumnDef<Task>[] = [
         </div>
       )
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
+    filterFn: (row, _id, value) => {
+      return value.includes(row.getValue(_id))
     }
   },
   {
