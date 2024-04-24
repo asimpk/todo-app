@@ -1,9 +1,38 @@
-export default function Home() {
+import { promises as fs } from 'fs'
+import path from 'path'
+import { Metadata } from 'next'
+import { z } from 'zod'
+import { columns } from '@/components/columns'
+import { DataTable } from '@/components/tasks-table'
+import { taskSchema } from '@/data/schema'
+
+export const metadata: Metadata = {
+  title: 'Tasks',
+  description: 'A task and issue tracker build using Tanstack Table.'
+}
+
+// Simulate a database read for tasks.
+async function getTasks() {
+  const data = await fs.readFile(
+    path.join(process.cwd(), 'src/data/tasks.json')
+  )
+
+  const tasks = JSON.parse(data.toString())
+
+  return z.array(taskSchema).parse(tasks)
+}
+
+export default async function TaskPage() {
+  const tasks = await getTasks()
+
   return (
-    <section className='py-8'>
-      <div className='container'>
-        <h1 className='text-3xl'>Content Area</h1>
+    <div className='container flex-1 flex-col space-y-8 overflow-y-auto p-8 md:flex'>
+      <div className='flex items-center justify-between space-y-2'>
+        <p className='text-muted-foreground'>
+          Here&apos;s a list of tasks for this month!
+        </p>
       </div>
-    </section>
+      <DataTable data={tasks} columns={columns} />
+    </div>
   )
 }

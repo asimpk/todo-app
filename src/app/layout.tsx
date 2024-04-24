@@ -18,15 +18,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={inter.className}>
+      <body className={`${inter.className} overflow-hidden`}>
         <ThemeProvider
           attribute='class'
           defaultTheme='system'
           enableSystem
           disableTransitionOnChange
         >
-          <NavHeader />
-          {children}
+          <div className='flex h-screen max-h-screen flex-col'>
+            <NavHeader />
+            {children}
+          </div>
         </ThemeProvider>
       </body>
     </html>
