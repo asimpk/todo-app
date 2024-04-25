@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { z } from 'zod'
 import { columns } from '@/components/columns'
 import { DataTable } from '@/components/tasks-table'
-import { taskSchema } from '@/data/schema'
+import { taskSchema } from '@/formSchema/schema'
 
 export const metadata: Metadata = {
   title: 'Tasks',
@@ -16,12 +16,12 @@ async function getTasks() {
     })
 
     if (!res.ok) {
-      throw new Error('Failed to fetch topics')
+      throw new Error('Failed to fetch tasks')
     }
     const data = await res.json()
     return z.array(taskSchema).parse(data?.tasks)
   } catch (error) {
-    console.log('Error loading topics: ', error)
+    console.log('Error loading tasks: ', error)
   }
 }
 
