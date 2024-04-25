@@ -5,8 +5,8 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Badge } from './ui/badge'
 import { Checkbox } from './ui/checkbox'
 
-import { labels, priorities, statuses } from '../data/data'
-import { Task } from '../data/schema'
+import { labels, priorities, statuses } from './task-table-columns'
+import { Task } from '../formSchema/schema'
 import { DataTableColumnHeader } from './tasks-table-column-header'
 import { DataTableRowActions } from './tasks-table-row-actions'
 

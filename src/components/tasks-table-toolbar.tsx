@@ -3,6 +3,7 @@ import { Cross2Icon } from '@radix-ui/react-icons'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
 import { DataTableViewOptions } from './tasks-table-view-options'
+import { TaskDialog } from './task-dialog'
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -24,6 +25,7 @@ export function DataTableToolbar<TData>({
           }
           className='h-8 w-[150px] lg:w-[250px]'
         />
+        <TaskDialog />
         {isFiltered && (
           <Button
             variant='ghost'

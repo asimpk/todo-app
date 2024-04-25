@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
-import { Task } from '@/data/schema'
+import { Task } from '@/formSchema/schema'
 
 // Check if MONGODB_URI is defined before connecting
 if (process.env.MONGODB_URI) {
