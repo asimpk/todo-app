@@ -8,10 +8,8 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger
+  DialogTitle
 } from '@/components/ui/dialog'
-import { PlusCircledIcon } from '@radix-ui/react-icons'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -32,10 +30,10 @@ import { Task, taskSchema } from '@/formSchema/schema'
 
 type TaskDialogProps = {
   task?: Task
+  closeDialog: () => void
 }
 
-export function TaskDialog({ task }: TaskDialogProps) {
-  const [showNewTaskDialog, setShowNewTaskDialog] = React.useState(false)
+export function TaskDialog({ task, closeDialog }: TaskDialogProps) {
   const form = useForm<Task>({
     defaultValues: task ?? { title: '', status: '', label: '', priority: '' },
     resolver: zodResolver(taskSchema)
@@ -51,40 +49,48 @@ export function TaskDialog({ task }: TaskDialogProps) {
   } = form
 
   const processForm: SubmitHandler<Task> = async data => {
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api`, {
-        method: 'POST',
-        body: JSON.stringify({ data }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
+    if (task) {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/${task._id}`,
+          {
+            method: 'PUT',
+            body: JSON.stringify({ ...data }),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        )
 
-      if (!res.ok) {
-        throw new Error('Failed to create task')
+        if (!res.ok) {
+          throw new Error('Failed to update task')
+        }
+      } catch (error) {
+        console.log('Error updating task: ', error)
       }
-    } catch (error) {
-      console.log('Error creating tasks: ', error)
+    } else {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api`, {
+          method: 'POST',
+          body: JSON.stringify({ data }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+
+        if (!res.ok) {
+          throw new Error('Failed to create task')
+        }
+      } catch (error) {
+        console.log('Error creating task: ', error)
+      }
     }
-    setShowNewTaskDialog(false)
+    closeDialog()
     router.refresh()
     reset()
   }
   return (
-    <Dialog open={showNewTaskDialog} onOpenChange={setShowNewTaskDialog}>
-      <DialogTrigger asChild>
-        <Button
-          variant='outline'
-          size='sm'
-          className='ml-auto hidden h-8 lg:flex'
-          onClick={() => {
-            setShowNewTaskDialog(true)
-          }}
-        >
-          <PlusCircledIcon className='mr-2 h-5 w-5' />
-          Create Task
-        </Button>
-      </DialogTrigger>
+    <Dialog open={true}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add a new task</DialogTitle>
@@ -216,11 +222,7 @@ export function TaskDialog({ task }: TaskDialogProps) {
             </div>
 
             <DialogFooter>
-              <Button
-                type='button'
-                variant='secondary'
-                onClick={() => setShowNewTaskDialog(false)}
-              >
+              <Button type='button' variant='secondary' onClick={closeDialog}>
                 Cancel
               </Button>
 
